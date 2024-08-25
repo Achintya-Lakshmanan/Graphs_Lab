@@ -18,7 +18,7 @@ def generate_random_graph(num_nodes, edge_probability):
             f.write(' '.join(map(str, row)) + '\n')
 
 # Generate a 500-node graph with approximately 2% edge density
-n, d = 50, .1
+n, d = 500, .2
 generate_random_graph(n, d)
 
 print(f"Random graph with {n} nodes has been generated and saved to 'random_graph.txt'")

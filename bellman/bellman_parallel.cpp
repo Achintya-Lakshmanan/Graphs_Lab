@@ -60,9 +60,9 @@ public:
         }
     }
     
-    vector<vector<int>> min_plus(const vector<vector<int>>& A, const vector<vector<int>>& B) {
+    vector<vector<int>> min_plus(vector<vector<int>>& A, vector<vector<int>>& B) {
         vector<vector<int>> C(vertices, vector<int>(vertices, INT_MAX));
-        #pragma omp parallel for
+        #pragma omp parallel for schedule(dynamic)
         for (int i = 0; i < vertices; i++) {
             for (int j = 0; j < vertices; j++) {
                 for (int k = 0; k < vertices; k++) {
@@ -78,7 +78,24 @@ public:
     vector<vector<int>> bellman_ford_all() {
         vector<vector<int>> dist = adjMatrix;
         for (int k = 0; k < vertices - 1; k++) {
+            vector<vector<int>> prev_dist = dist;
             dist = min_plus(dist, dist);
+            
+            bool changed = true;
+            #pragma omp parallel for reduction(&&:changed)
+            for (int i = 0; i < vertices; i++) {
+                for (int j = 0; j < vertices; j++) {
+                    if (dist[i][j] == prev_dist[i][j]) {
+                        changed = true;
+                        break;
+                    }
+                }
+                if (changed) break;
+            }
+            
+            if (changed) {
+                break;
+            }
         }
         return dist;
     }

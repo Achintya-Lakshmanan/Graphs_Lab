@@ -61,33 +61,44 @@ public:
 
     vector<int> bellman_ford(int startVertex) {
         vector<int> distance(vertices, INT_MAX);
+        vector<int> prev_distance(vertices, INT_MAX);
         distance[startVertex] = 0;
 
         for (int i = 0; i < vertices - 1; ++i) {
+            prev_distance = distance;
+            bool changed = false;
             for (int u = 0; u < vertices; ++u) {
                 for (int v = 0; v < vertices; ++v) {
                     if (adjMatrix[u][v] != INT_MAX && distance[u] != INT_MAX &&
                         distance[u] + adjMatrix[u][v] < distance[v]) {
                         distance[v] = distance[u] + adjMatrix[u][v];
+                        changed = true;
                     }
+                }
+            }
+            if (!changed) {
+                // If no changes were made in this iteration, check if it's the same as the previous iteration
+                if (distance == prev_distance) {
+                    break;  // Stop if distance remains the same for 2 iterations
                 }
             }
         }
 
-        for (int u = 0; u < vertices; ++u) {
-            for (int v = 0; v < vertices; ++v) {
-                if (adjMatrix[u][v] != INT_MAX && distance[u] != INT_MAX &&
-                    distance[u] + adjMatrix[u][v] < distance[v]) {
-                    cerr << "Graph contains a negative-weight cycle" << endl;
-                    return vector<int>(vertices, INT_MIN);
-                }
-            }
-        }
+        // for (int u = 0; u < vertices; ++u) {
+        //     for (int v = 0; v < vertices; ++v) {
+        //         if (adjMatrix[u][v] != INT_MAX && distance[u] != INT_MAX &&
+        //             distance[u] + adjMatrix[u][v] < distance[v]) {
+        //             cerr << "Graph contains a negative-weight cycle" << endl;
+        //             return vector<int>(vertices, INT_MIN);
+        //         }
+        //     }
+        // }
         return distance;
     }
 
     vector<vector<int>> shortestpaths_all() {
         vector<vector<int>> all_distances(vertices);
+
         for (int i = 0; i < vertices; ++i) {
             all_distances[i] = bellman_ford(i);
         }
