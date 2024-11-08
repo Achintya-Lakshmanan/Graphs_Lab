@@ -77,9 +77,8 @@ public:
                 }
             }
             if (!changed) {
-                // If no changes were made in this iteration, check if it's the same as the previous iteration
                 if (distance == prev_distance) {
-                    break;  // Stop if distance remains the same for 2 iterations
+                    break;
                 }
             }
         }
